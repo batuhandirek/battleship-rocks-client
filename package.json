@@ -1,0 +1,46 @@
+{
+  "name": "battleship-rocks",
+  "version": "1.0.1",
+  "description": "CLI client for battleship.rocks",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "start": "node dist/bundle.js",
+    "dev": "webpack --mode development && node dist/bundle",
+    "build": "webpack --mode production"
+  },
+  "bin": {
+    "battleship": "./bin/global.js"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "battleship",
+    "CLI game"
+  ],
+  "author": "batuhandirek",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "blessed": "^0.1.81",
+    "command-line-args": "^5.1.1",
+    "lodash": "^4.17.20",
+    "nanoid": "^3.1.18",
+    "react": "^16.14.0",
+    "react-blessed": "^0.6.2",
+    "socket.io-client": "2.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-react": "^7.12.7",
+    "@babel/register": "^7.12.1",
+    "@types/node": "^14.14.10",
+    "babel-loader": "^8.2.2",
+    "typescript": "^4.1.2",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0",
+    "ws": "^7.4.0"
+  }
+}

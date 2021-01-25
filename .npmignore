@@ -1,0 +1,6 @@
+src
+node_modules
+scripts
+ship.txt
+.babelrc
+webpack.config.js
