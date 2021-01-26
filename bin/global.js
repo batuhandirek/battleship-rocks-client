@@ -9,7 +9,7 @@ const options = commandLineArgs(optionDefinitions)
 if(options.version) {
     const package = require(`${__dirname}/../package.json`)
     console.log(package)
-    console.log('Battleship v1.0.1')
+    console.log('Battleship v1.0.2')
 }
 else {
     require('../dist/bundle')

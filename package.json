@@ -1,6 +1,6 @@
 {
   "name": "battleship-rocks",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI client for battleship.rocks",
   "main": "dist/bundle.js",
   "scripts": {

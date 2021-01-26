@@ -22,7 +22,7 @@ const run = async () => {
         console.log('[ServerDiscovery] Starting')
         const discoveryResponse = await axios.get(
             `http://discover.battleship.rocks`, 
-            { headers: { 'BS-Version': '1.0.1' } }
+            { headers: { 'BS-Version': '1.0.2' } }
         )
         const { servers } = discoveryResponse.data
         announcement = discoveryResponse.data.announcement
