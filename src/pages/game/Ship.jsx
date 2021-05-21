@@ -1,11 +1,11 @@
-import React from 'react';
+import { Component } from 'react';
 import { debug, str } from '../../lib/screen';
 
 const SHIP_CELL_SIZE = {
     x: 6, y: 3
 }
 
-export class Ship extends React.Component {
+export class Ship extends Component {
     constructor(props) {
         super(props)
     }

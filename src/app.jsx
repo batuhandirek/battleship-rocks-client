@@ -1,7 +1,7 @@
 import * as process from 'process'
 import * as _ from 'lodash'
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { Home } from './pages/home/Home'
 import { Game } from './pages/game/Game'

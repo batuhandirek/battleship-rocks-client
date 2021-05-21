@@ -1,6 +1,4 @@
-import React, {Component} from 'react'
-
-import { debug } from "../lib/screen"
+import { Component } from 'react';
 
 export class Spinner extends Component {
     constructor(props) {

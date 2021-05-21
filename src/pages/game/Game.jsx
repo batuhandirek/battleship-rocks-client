@@ -1,4 +1,4 @@
-import React from 'react'
+import { createRef, Component } from 'react';
 import { debug, str } from '../../lib/screen'
 
 import { EnemyZone } from './EnemyZone'
@@ -8,7 +8,7 @@ import { AppContext } from '../../contexts'
 import { SIZE_CONFIG } from '../../constants/GAME'
 import { join } from 'path'
 
-export class Game extends React.Component {
+export class Game extends Component {
     static contextType = AppContext;
     constructor(props) {
         super(props)
@@ -20,9 +20,9 @@ export class Game extends React.Component {
             ['<- Go back']: 'back',
         }
     
-        this.passwordInput = React.createRef()
-        this.myBoard = React.createRef()
-        this.opponentBoard = React.createRef()
+        this.passwordInput = createRef()
+        this.myBoard = createRef()
+        this.opponentBoard = createRef()
         
         this.state = {
             gameId: null,

@@ -1,4 +1,4 @@
-import React from 'react';
+import { createRef, Component } from 'react';
 import * as _ from 'lodash'
 import { debug, str } from '../../lib/screen';
 
@@ -8,7 +8,7 @@ import { SIZE_CONFIG } from '../../constants/GAME'
 import { Grid } from './Grid';
 import { Ship } from './Ship'
 
-export class EnemyZone extends React.Component {
+export class EnemyZone extends Component {
     constructor(props) {
         super(props)
 
@@ -21,7 +21,7 @@ export class EnemyZone extends React.Component {
             moves: []
         }
 
-        this.log = React.createRef()
+        this.log = createRef()
     }
 
     //Methods used by Game.jsx

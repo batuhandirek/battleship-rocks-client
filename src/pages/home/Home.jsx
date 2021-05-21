@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import { useRef, useEffect, useContext } from 'react';
 import { LOGO, SHIP } from '../../constants/ASCII'
 import { AppContext } from '../../contexts';
 

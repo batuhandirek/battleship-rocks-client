@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { createRef, Component, useRef, useEffect } from 'react';
 import * as _ from 'lodash'
 
 import { 
@@ -10,7 +10,7 @@ import {
 import { Ship } from './Ship'
 import { Grid } from './Grid';
 
-export class MyZone extends React.Component {
+export class MyZone extends Component {
     constructor(props) {
         super(props)
         const { board, ships } = randomizeBoard(props.rowCount)
@@ -19,8 +19,8 @@ export class MyZone extends React.Component {
             ships
         }
 
-        this.formationMenu = React.createRef()
-        this.log = React.createRef()
+        this.formationMenu = createRef()
+        this.log = createRef()
     }
     
 
