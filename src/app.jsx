@@ -1,55 +1,33 @@
-import * as process from 'process'
-import * as _ from 'lodash'
+import * as process from "process";
 
-import { Component } from 'react';
+import { useRef, useState } from "react";
 
-import { Home } from './pages/home/Home'
-import { Game } from './pages/game/Game'
-import { Howto } from './pages/howto/Howto';
+import { Home } from "./pages/home/Home";
+import { Game } from "./pages/game/Game";
+import { Howto } from "./pages/howto/Howto";
 
-import { Api } from './lib/api'
+export const App = () => {
+  const [page, setPage] = useState("home");
 
-export class App extends Component {
-    constructor(props) {
-        super(props);
+  const NAV = useRef({
+    home: () => <Home onNavigation={handleNavigation} />,
+    game: () => <Game onNavigation={handleNavigation} />,
+    howto: () => <Howto onNavigation={handleNavigation} />,
+  });
 
-        this.state = { 
-            page: 'home',
-        }
-
-        this.NAV = {
-            home: () => <Home onNavigation={this.handleNavigation.bind(this)}/>,
-            game: () => <Game  onNavigation={this.handleNavigation.bind(this)}/>,
-            howto: () => <Howto onNavigation={this.handleNavigation.bind(this)}/>,
-        }
-
-        this.api = new Api()
+  // Navigation
+  const handleNavigation = (submitted) => {
+    if (submitted === "quit") {
+      quit();
+    } else {
+      setPage(submitted);
     }
+  };
 
-    // Navigation
-    handleNavigation(submitted) {
-        if(submitted === 'home') this.goHome()
-        if(submitted === 'game') this.goGame()
-        if(submitted === 'howto') this.goHowto()
-        if(submitted === 'quit') this.quit()
-    }
+  // Quit
+  quit = () => {
+    process.exit(0);
+  };
 
-    goHome() { this.setState(state => ({ ...state, page: 'home' })) }
-    goGame() { this.setState(state => ({...state, page: 'game' }))}
-    goHowto() { this.setState(state => ({ ...state, page: 'howto' })) }
-
-    // Quit
-    quit = () => { 
-        if(this.socket) this.socket.disconnect()
-        process.exit(0)
-    }
-
-    render() {
-        return (
-            <element>
-                {this.NAV[this.state.page]()}
-            </element>
-        );
-    }
-}
-
+  return <element>{NAV[page]()}</element>;
+};
