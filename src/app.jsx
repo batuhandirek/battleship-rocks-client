@@ -6,7 +6,7 @@ import { Home } from "./pages/home/Home";
 import { Game } from "./pages/game/Game";
 import { Howto } from "./pages/howto/Howto";
 
-export const App = () => {
+export function App() {
   const [page, setPage] = useState("home");
 
   const NAV = useRef({
@@ -25,9 +25,9 @@ export const App = () => {
   };
 
   // Quit
-  quit = () => {
+  const quit = () => {
     process.exit(0);
   };
 
-  return <element>{NAV[page]()}</element>;
-};
+  return <element>{NAV.current[page]()}</element>;
+}
