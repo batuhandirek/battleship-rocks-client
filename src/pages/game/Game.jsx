@@ -1,4 +1,4 @@
-import { useRef, useEffect, useReducer } from "react";
+import { useRef, useEffect, useReducer, useState } from "react";
 
 import { EnemyZone } from "./EnemyZone";
 import { MyZone } from "./MyZone";
@@ -11,7 +11,9 @@ import {
   gameActionTypes,
   MODES,
 } from "./gameReducer";
-import { AppContext } from '../../contexts'
+import { AppContext } from "../../contexts";
+import { getShipCoordinateArray } from "../../lib/util";
+import * as _ from 'lodash'
 
 const MENU_MAP = {
   ["Find an opponent"]: gameActionTypes.MATCH,
@@ -25,6 +27,7 @@ export function Game(props) {
   const myBoard = useRef();
   const opponentBoard = useRef();
   const socketContextRef = useRef(AppContext);
+  const [opponentIsShooting, setOpponentIsShooting] = useState(false);
 
   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
 
@@ -33,8 +36,14 @@ export function Game(props) {
 
     return () => {
       if (socketContextRef.current.socket) {
-        socketContextRef.current.socket.off("game:opponent:ready", onOpponentReady);
-        socketContextRef.current.socket.off("game:opponent:left", onOpponentLeft);
+        socketContextRef.current.socket.off(
+          "game:opponent:ready",
+          onOpponentReady,
+        );
+        socketContextRef.current.socket.off(
+          "game:opponent:left",
+          onOpponentLeft,
+        );
         socketContextRef.current.socket.off("game:start", onGameStart);
         socketContextRef.current.socket.off("game:move", onGameMove);
         socketContextRef.current.socket.off("game:finished", onGameFinish);
@@ -180,9 +189,9 @@ export function Game(props) {
     dispatch(actions.setTurn(turn));
 
     if (turn === socketContextRef.current.userId) {
-      if (opponentBoard.current) opponentBoard.current.activateShooting();
+      setOpponentIsShooting(true);
     } else {
-      if (opponentBoard.current) opponentBoard.current.disableShooting();
+      setOpponentIsShooting(false);
     }
   };
 
@@ -206,21 +215,30 @@ export function Game(props) {
       // TODO: Needs to be done async
       // We shot, paint enemy grid
       if (valid && playerId === socketContextRef.current.userId) {
-        opponentBoard.current.onMove({
-          row,
-          col,
-          shot,
-          destroyedShip,
-        });
+        const newBoard = _.cloneDeep(board.boardStatus);
+        if (destroyedShip) {
+          const coords = getShipCoordinateArray(destroyedShip);
+          coords.forEach(({ row, col }) => {
+            newBoard[row][col] = 3;
+          });
+        } else {
+          newBoard[row][col] = shot ? 2 : 4;
+        }
+        dispatch(actions.onOpponentMove({
+          boardStatus: newBoard,
+          destroyedShips: destroyedShip
+            ? [...board.destroyedShips, destroyedShip]
+            : board.destroyedShips,
+        }))
       }
       // Enemy shot, paint my grid
       if (valid && playerId !== socketContextRef.current.userId) {
         myBoard.current.onMove({ row, col, shot, destroyedShip });
       }
       if (turn === socketContextRef.current.userId) {
-        opponentBoard.current.activateShooting();
+        setOpponentIsShooting(true);
       } else {
-        opponentBoard.current.disableShooting();
+        setOpponentIsShooting(false);
       }
     }
   };
@@ -574,7 +592,7 @@ export function Game(props) {
         )}
       </box>
       {/*  Enemy zone */}
-      {["PLACEMENT", "PLAYING"].includes(state.stage) && (
+      {[MODES.PLACEMENT, MODES.PLAYING].includes(state.stage) && (
         <box top="55%" width="100%" height="45%">
           <box
             label={"Opponent board"}
@@ -586,11 +604,14 @@ export function Game(props) {
             top="center">
             <box width="100%-2" left="0" height="100%-2">
               <EnemyZone
+                isShooting={opponentIsShooting}
                 ref={opponentBoard}
                 rowCount={state.gameSize}
                 placementConfirmed={state.enemyPlacementConfirmed}
                 myTurn={socketContextRef.current.userId === state.turn}
                 onMove={handleSubmitMove}
+                boardStatus={state.opponentBoardStatus}
+                destroyedShip={state.opponentDestroyedShips}
               />
             </box>
           </box>

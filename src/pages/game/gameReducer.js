@@ -1,4 +1,5 @@
 import { debug } from "../../lib/screen";
+import { generateEmptyBoard } from '../../lib/util'
 
 // MODE_SELECTION
 //   Public: SIZE_SELECTION MATCHING
@@ -37,7 +38,9 @@ export const gameActionTypes = {
   PLAYER_MOVE: "player_move",
   OPPONENT_LEFT: "opponent_left",
   GAME_FINISH: "game_finish",
-  SET_GAME_SIZE: "set_game_size"
+  SET_GAME_SIZE: "set_game_size",
+  SET_OPPONENT_IS_SHOOTING: 'set_opponent_is_shooting',
+  OPPONENT_MOVE: 'opponent_move'
 };
 
 export const gameInitialState = {
@@ -59,6 +62,8 @@ export const gameInitialState = {
   // When the game is ENDED
   hasWon: false,
   hasOpponentLeft: false,
+  opponentIsShooting: false,
+  opponentBoardStatus: generateEmptyBoard(null),
 };
 
 export function gameReducer(state = gameInitialState, action) {
@@ -140,6 +145,7 @@ export function gameReducer(state = gameInitialState, action) {
         stage: MODES.PLACEMENT,
         gameId,
         gameSize,
+        opponentBoardStatus: generateEmptyBoard(gameSize)
       };
     }
     case gameActionTypes.OPPONENT_READY:
@@ -156,8 +162,8 @@ export function gameReducer(state = gameInitialState, action) {
     case gameActionTypes.PLAYER_MOVE: {
       const {
         turn,
-        playerId: previousMoveUser,
-        shot: previousMoveShot,
+        previousMoveUser,
+        previousMoveShot,
       } = action.payload;
       return {
         ...state,
@@ -184,7 +190,21 @@ export function gameReducer(state = gameInitialState, action) {
       return {
         ...state,
         gameSize,
-        stage
+        stage,
+        opponentBoardStatus: generateEmptyBoard(gameSize)
+      }
+    }
+    case gameActionTypes.SET_OPPONENT_IS_SHOOTING:
+      return {
+        ...state,
+        opponentIsShooting: action.payload.opponentIsShooting
+      }
+    case gameActionTypes.OPPONENT_MOVE: {
+      const { boardStatus, destroyedShips } = action.payload
+
+      return {
+        opponentBoardStatus: boardStatus,
+        opponentDestroyedShips: destroyedShips
       }
     }
     default:
@@ -250,7 +270,9 @@ export const actions = {
   gameFinish(hasWon) {
     return {
       type: gameActionTypes.GAME_FINISH,
-      hasWon
+      payload: {
+        hasWon
+      }
     }
   },
   setGameSize(payload) {
@@ -259,4 +281,16 @@ export const actions = {
       payload,
     };
   },
+  setOpponentIsShooting(opponentIsShooting) {
+    return {
+      type: gameActionTypes.SET_OPPONENT_IS_SHOOTING,
+      payload: {
+        opponentIsShooting
+      }
+    }
+  },
+  onOpponentMove(payload) {
+    type: gameActionTypes.OPPONENT_MOVE,
+    payload
+  }
 };
