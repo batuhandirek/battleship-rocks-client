@@ -1,6 +1,6 @@
 import { useRef, useEffect, useContext } from "react";
 import { LOGO, SHIP } from "../../constants/ASCII";
-import { AppContext } from "../../contexts";
+import { AppContext } from "../../appContext";
 
 export function Home({ onNavigation }) {
   const list = useRef(null);
