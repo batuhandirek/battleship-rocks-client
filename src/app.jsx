@@ -5,13 +5,19 @@ import { useRef, useState } from "react";
 import { Home } from "./pages/home/Home";
 import { Game } from "./pages/game/Game";
 import { Howto } from "./pages/howto/Howto";
+import { AppContextProvider } from "./appContext";
+import { GameContextProvider } from "./pages/game/gameContext";
 
 export function App() {
   const [page, setPage] = useState("home");
 
   const NAV = useRef({
     home: () => <Home onNavigation={handleNavigation} />,
-    game: () => <Game onNavigation={handleNavigation} />,
+    game: () => (
+      <GameContextProvider>
+        <Game onNavigation={handleNavigation} />
+      </GameContextProvider>
+    ),
     howto: () => <Howto onNavigation={handleNavigation} />,
   });
 
@@ -29,5 +35,9 @@ export function App() {
     process.exit(0);
   };
 
-  return <element>{NAV.current[page]()}</element>;
+  return (
+    <AppContextProvider>
+      <element>{NAV.current[page]()}</element>
+    </AppContextProvider>
+  );
 }

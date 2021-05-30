@@ -1,5 +1,11 @@
+import * as _ from "lodash";
+
 import { debug } from "../../lib/screen";
-import { generateEmptyBoard } from '../../lib/util'
+import {
+  changeCoordOnBoard,
+  generateEmptyBoard,
+  randomizeBoard,
+} from "../../lib/util";
 
 // MODE_SELECTION
 //   Public: SIZE_SELECTION MATCHING
@@ -39,8 +45,10 @@ export const gameActionTypes = {
   OPPONENT_LEFT: "opponent_left",
   GAME_FINISH: "game_finish",
   SET_GAME_SIZE: "set_game_size",
-  SET_OPPONENT_IS_SHOOTING: 'set_opponent_is_shooting',
-  OPPONENT_MOVE: 'opponent_move'
+  SET_OPPONENT_IS_SHOOTING: "set_opponent_is_shooting",
+  OPPONENT_MOVE: "opponent_move",
+  MY_MOVE: "my_move",
+  RANDOMIZE_MY_BOARD: "randomize_my_board",
 };
 
 export const gameInitialState = {
@@ -59,14 +67,27 @@ export const gameInitialState = {
   // To display if last hit was success
   previousMoveUser: null,
   previousMoveShot: false,
+  // myZone
+  myBoardStatus: generateEmptyBoard(null),
+  myShips: [],
+
+  // opponent
+  opponentIsShooting: false,
+  opponentBoardStatus: generateEmptyBoard(null),
+  opponentDestroyedShips: [],
   // When the game is ENDED
   hasWon: false,
   hasOpponentLeft: false,
-  opponentIsShooting: false,
-  opponentBoardStatus: generateEmptyBoard(null),
 };
 
 export function gameReducer(state = gameInitialState, action) {
+  function randomizeMyBoard() {
+    const { board, ships } = randomizeBoard(state.gameSize);
+    return {
+      myBoardStatus: board,
+      myShips: ships,
+    };
+  }
   switch (action.type) {
     case gameActionTypes.MATCH:
       return {
@@ -145,7 +166,8 @@ export function gameReducer(state = gameInitialState, action) {
         stage: MODES.PLACEMENT,
         gameId,
         gameSize,
-        opponentBoardStatus: generateEmptyBoard(gameSize)
+        opponentBoardStatus: generateEmptyBoard(gameSize),
+        ...randomizeMyBoard(gameSize),
       };
     }
     case gameActionTypes.OPPONENT_READY:
@@ -160,11 +182,7 @@ export function gameReducer(state = gameInitialState, action) {
         turn,
       };
     case gameActionTypes.PLAYER_MOVE: {
-      const {
-        turn,
-        previousMoveUser,
-        previousMoveShot,
-      } = action.payload;
+      const { turn, previousMoveUser, previousMoveShot } = action.payload;
       return {
         ...state,
         turn,
@@ -186,33 +204,65 @@ export function gameReducer(state = gameInitialState, action) {
         hasWon: action.payload.hasWon,
       };
     case gameActionTypes.SET_GAME_SIZE: {
-      const { gameSize, stage } = action.payload
+      const { gameSize, stage } = action.payload;
       return {
         ...state,
         gameSize,
         stage,
-        opponentBoardStatus: generateEmptyBoard(gameSize)
-      }
+        opponentBoardStatus: generateEmptyBoard(gameSize),
+        ...randomizeMyBoard(gameSize),
+      };
     }
     case gameActionTypes.SET_OPPONENT_IS_SHOOTING:
       return {
         ...state,
-        opponentIsShooting: action.payload.opponentIsShooting
-      }
+        opponentIsShooting: action.payload.opponentIsShooting,
+      };
     case gameActionTypes.OPPONENT_MOVE: {
-      const { boardStatus, destroyedShips } = action.payload
+      const { destroyedShip } = action.payload;
+      const newBoard = changeCoordOnBoard(
+        state.opponentBoardStatus,
+        destroyedShip,
+      );
+      return {
+        ...state,
+        opponentBoardStatus: newBoard,
+        opponentDestroyedShips: destroyedShip
+          ? [...state.opponentDestroyedShips, destroyedShip]
+          : state.opponentDestroyedShips,
+      };
+    }
+    case gameActionTypes.MY_MOVE: {
+      const { destroyedShip } = action.payload;
+      const newShips = _.cloneDeep(state.ships);
+      const shipHit = getShipAtCoordinate({ ships: newShips, row, col });
+      // Increment ship
+      if (shipHit) {
+        const shipIndex = newShips.findIndex((s) => s.id === shipHit.id);
+        newShips[shipIndex].hit = (newShips[shipIndex].hit || 0) + 1;
+        newShips[shipIndex].destroyed =
+          newShips[shipIndex].hit === newShips[shipIndex].size;
+      }
+
+      const newBoard = changeCoordOnBoard(state.myBoardStatus, destroyedShip);
 
       return {
-        opponentBoardStatus: boardStatus,
-        opponentDestroyedShips: destroyedShips
-      }
+        ...state,
+        myBoardStatus: newBoard,
+        myShips: newShips,
+      };
     }
+    case gameActionTypes.RANDOMIZE_MY_BOARD:
+      return {
+        ...state,
+        ...randomizeMyBoard()
+      }
     default:
       throw new Error();
   }
 }
 
-export const actions = {
+export const gameActions = {
   error(error) {
     return {
       type: gameActionTypes.ERROR,
@@ -271,9 +321,9 @@ export const actions = {
     return {
       type: gameActionTypes.GAME_FINISH,
       payload: {
-        hasWon
-      }
-    }
+        hasWon,
+      },
+    };
   },
   setGameSize(payload) {
     return {
@@ -285,12 +335,24 @@ export const actions = {
     return {
       type: gameActionTypes.SET_OPPONENT_IS_SHOOTING,
       payload: {
-        opponentIsShooting
-      }
-    }
+        opponentIsShooting,
+      },
+    };
   },
-  onOpponentMove(payload) {
-    type: gameActionTypes.OPPONENT_MOVE,
-    payload
-  }
+  onOpponentMove(destroyedShip) {
+    return {
+      type: gameActionTypes.OPPONENT_MOVE,
+      payload: {
+        destroyedShip,
+      },
+    };
+  },
+  onMyMove(destroyedShip) {
+    return {
+      type: gameActionTypes.MY_MOVE,
+      payload: {
+        destroyedShip,
+      },
+    };
+  },
 };
