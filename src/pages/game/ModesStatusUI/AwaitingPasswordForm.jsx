@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useAppCtx } from "../../../appContext";
 import { useGameCtx } from "../gameContext";
 import { gameActions, gameActionTypes } from "../gameReducer";
@@ -8,6 +9,7 @@ export function AwaitingPasswordForm() {
     state: { error },
   } = useGameCtx();
   const appCtx = useAppCtx();
+  const passwordInput = useRef()
 
   const handleJoinPrivateGame = async () => {
     const password = passwordInput.current.getValue();

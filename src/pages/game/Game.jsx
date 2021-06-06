@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, createElement } from "react";
 
 import { EnemyZone } from "./EnemyZone";
 import { MyZone } from "./MyZone";
@@ -23,10 +23,7 @@ export function Game() {
   const formationMenuRef = useRef();
   const [opponentIsShooting, setOpponentIsShooting] = useState(false);
   const { socket, api, token, userId, navigateTo } = useAppCtx();
-  const {
-    state,
-    dispatch,
-  } = useGameCtx();
+  const { state, dispatch } = useGameCtx();
 
   useEffect(() => {
     socket.on("game:found", onGameFound);
@@ -43,12 +40,13 @@ export function Game() {
   }, []);
 
   useEffect(() => {
+    console.log(state.gameSize, state.isGamePrivate)
     if (state.isGamePrivate) {
       handleCreatePrivateGame();
     } else {
       handleFindOpponent();
     }
-  }, [state.size]);
+  }, [state.gameSize]);
 
   // SENDING SOCKET MESSAGES
   // Discover game
@@ -64,8 +62,9 @@ export function Game() {
       size: state.gameSize,
       token: token,
     });
+    console.log(createRes)
     if (createRes.ok) {
-      dispatch(gameActions.privateGameSuccess());
+      dispatch(gameActions.privateGameSuccess(createRes.data));
     }
   };
 
@@ -172,6 +171,8 @@ export function Game() {
     [MODES.ENDED]: Ended,
   });
 
+  const stateEl = modesStatusUIMapRef.current[state.stage]
+
   return (
     <box width="100%" height="100%" top="0%" left="0%">
       {/*  My zone */}
@@ -182,7 +183,9 @@ export function Game() {
       </box>
       {/*  Status bar */}
       <box top="45%" width="100%" height="10%">
-        {modesStatusUIMapRef.current[state.stage] || null}
+        {stateEl
+          ? createElement(stateEl)
+          : null}
       </box>
       {/*  Enemy zone */}
       {[MODES.PLACEMENT, MODES.PLAYING].includes(state.stage) && (

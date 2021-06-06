@@ -56,7 +56,7 @@ export const gameInitialState = {
   gamePassword: null,
   error: null,
   stage: MODES.MODE_SELECTION,
-  isGamePrivate: null,
+  isGamePrivate: false,
   gameSize: null,
   placementConfirmed: false,
   placementFailed: false,
@@ -81,8 +81,14 @@ export const gameInitialState = {
 };
 
 export function gameReducer(state = gameInitialState, action) {
-  function randomizeMyBoard() {
-    const { board, ships } = randomizeBoard(state.gameSize);
+  console.log(action)
+  function randomizeMyBoard(gameSize = state.gameSize) {
+    let board, ships;
+    const randomized = randomizeBoard(gameSize);
+    if (randomized) {
+      ({ board, ships } = randomized);
+    }
+    console.log({ board, ships, gameSize })
     return {
       myBoardStatus: board,
       myShips: ships,
@@ -98,7 +104,7 @@ export function gameReducer(state = gameInitialState, action) {
     case gameActionTypes.CREATE:
       return {
         ...state,
-        stage: "SIZE_SELECTION",
+        stage: MODES.SIZE_SELECTION,
         isGamePrivate: true,
       };
     case gameActionTypes.JOIN:
@@ -255,8 +261,8 @@ export function gameReducer(state = gameInitialState, action) {
     case gameActionTypes.RANDOMIZE_MY_BOARD:
       return {
         ...state,
-        ...randomizeMyBoard()
-      }
+        ...randomizeMyBoard(),
+      };
     default:
       throw new Error();
   }

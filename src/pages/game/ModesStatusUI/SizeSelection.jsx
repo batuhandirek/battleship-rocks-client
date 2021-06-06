@@ -4,8 +4,8 @@ import { gameActions, MODES } from "../gameReducer";
 
 export function SizeSelection() {
   const {
-    isGamePrivate,
-    dispatch
+    state: { isGamePrivate },
+    dispatch,
   } = useGameCtx();
 
   const handleGameSizeSelection = ({ content }) => {

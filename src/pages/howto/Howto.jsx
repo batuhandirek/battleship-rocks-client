@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useAppCtx } from "../../appContext";
 
 
 const LINES = [
@@ -34,15 +35,16 @@ const LINES = [
   { text: "Game will end when all ships are destroyed.", type: "bullet" },
 ];
 
-export function Howto(props) {
+export function Howto() {
   const button = useRef(null);
+  const { navigateTo } = useAppCtx()
 
   useEffect(() => {
     button.current.focus();
   });
 
   function onBack() {
-    props.onNavigation("home");
+    navigateTo("home");
   }
 
   return (

@@ -1,18 +1,19 @@
 import { useAppCtx } from "../../../appContext";
 import { useGameCtx } from "../gameContext";
+import { Spinner } from '../../../components/Spinner'
 
 export function Waiting() {
   const {
     state: { gamePassword, gameId },
   } = useGameCtx();
-  const { api, token } = useAppCtx();
+  const { api, token, navigateTo } = useAppCtx();
 
   const handleCancelPrivateGame = async () => {
     await api.privateGameCancel({
       gameId: gameId,
       token: token,
     });
-    props.onNavigation("home");
+    navigateTo("home");
   };
   return (
     <box top="center" left="center">

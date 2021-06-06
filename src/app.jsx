@@ -1,43 +1,23 @@
-import * as process from "process";
-
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 import { Home } from "./pages/home/Home";
 import { Game } from "./pages/game/Game";
 import { Howto } from "./pages/howto/Howto";
-import { AppContextProvider } from "./appContext";
 import { GameContextProvider } from "./pages/game/gameContext";
+import { useAppCtx } from "./appContext";
 
 export function App() {
-  const [page, setPage] = useState("home");
+  const { page } = useAppCtx();
 
   const NAV = useRef({
-    home: () => <Home onNavigation={handleNavigation} />,
+    home: () => <Home />,
     game: () => (
       <GameContextProvider>
-        <Game onNavigation={handleNavigation} />
+        <Game />
       </GameContextProvider>
     ),
-    howto: () => <Howto onNavigation={handleNavigation} />,
+    howto: () => <Howto />,
   });
 
-  // Navigation
-  const handleNavigation = (submitted) => {
-    if (submitted === "quit") {
-      quit();
-    } else {
-      setPage(submitted);
-    }
-  };
-
-  // Quit
-  const quit = () => {
-    process.exit(0);
-  };
-
-  return (
-    <AppContextProvider>
-      <element>{NAV.current[page]()}</element>
-    </AppContextProvider>
-  );
+  return <element>{NAV.current[page]()}</element>;
 }

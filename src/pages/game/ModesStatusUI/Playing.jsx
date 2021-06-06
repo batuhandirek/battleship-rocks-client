@@ -1,5 +1,6 @@
 import { useAppCtx } from "../../../appContext";
 import { useGameCtx } from "../gameContext";
+import { Spinner } from '../../../components/Spinner'
 
 export function Playing() {
   const { previousMoveUser, previousMoveShot, turn, isSubmitting } =

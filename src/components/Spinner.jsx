@@ -1,34 +1,32 @@
-import { Component } from 'react';
+import { useRef, useState, useEffect } from "react";
 
-export class Spinner extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            tickCount: 0,
-        }
-    }
+export function Spinner({
+  tick = 100,
+  dotCount = 6,
+  width = 2,
+  boxProps = {},
+}) {
+  const [tickCount, setTickCount] = useState(0);
+  const interval = useRef()
 
-    componentDidMount() {
-        this.interval = setInterval(this.tick, this.props.tick||100)
-    }
+  useEffect(() => {
+    interval.current = setInterval(onTick, tick);
+    return () => {
+      if (interval.current) clearInterval(interval.current);
+    };
+  }, []);
 
-    componentWillUnmount() {
-        if(this.interval) clearInterval(this.interval)
-    }
+  function onTick() {
+    setTickCount(tickCount + 1);
+  }
 
-    tick = () => {
-        this.setState((state) => ({ ...this.state, tickCount: state.tickCount + 1}))
-    }
-
-    render() {
-        const dotCount = this.props.dotCount || 6
-        const width = this.props.width || 2
-        return (
-            <box width={width * dotCount} {...(this.props.boxProps || {})}>
-                {new Array(this.state.tickCount % (dotCount+1)).fill(1).map((one, index) => (
-                    <text width={width} left={ width * index } key={index}>.</text>
-                ))}
-            </box>
-        )
-    }
+  return (
+    <box width={width * dotCount} {...boxProps}>
+      {new Array(tickCount % (dotCount + 1)).fill(1).map((one, index) => (
+        <text width={width} left={width * index} key={index}>
+          .
+        </text>
+      ))}
+    </box>
+  );
 }

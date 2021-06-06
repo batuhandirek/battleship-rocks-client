@@ -1,10 +1,12 @@
-import { createContext, useState } from "react";
+import * as process from "process";
+import { createContext, useState, useContext } from "react";
 export const AppContext = createContext();
 
-export function AppContextProvider({ children }) {
+export function AppContextProvider({ children, rootState }) {
   const [page, setPage] = useState("home");
 
   const navigateTo = (submitted) => {
+    console.log(submitted);
     if (submitted === "quit") {
       quit();
     } else {
@@ -13,28 +15,24 @@ export function AppContextProvider({ children }) {
   };
 
   const state = {
-    socket: null,
-    userId: null,
-    token: null,
-    server: null,
-    api: null,
+    ...rootState,
     page,
-    navigateTo
-  }
-  return (
-    <AppContext.Provider value={state}>
-      {children}
-    </AppContext.Provider>
-  );
+    navigateTo,
+  };
+
+  // Quit
+  const quit = () => {
+    process.exit(0);
+  };
+
+  return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
 }
 
 export function useAppCtx() {
   const appContext = useContext(AppContext);
 
   if (!appContext) {
-    throw new Error(
-      "useAppCtx should be used within a AppContextProvider",
-    );
+    throw new Error("useAppCtx should be used within a AppContextProvider");
   }
 
   return appContext;

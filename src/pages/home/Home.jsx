@@ -2,9 +2,9 @@ import { useRef, useEffect, useContext } from "react";
 import { LOGO, SHIP } from "../../constants/ASCII";
 import { AppContext } from "../../appContext";
 
-export function Home({ onNavigation }) {
+export function Home() {
   const list = useRef(null);
-  const context = useContext(AppContext);
+  const { announcement, navigateTo } = useContext(AppContext);
 
   const MENU_MAP = {
     ["Play a game"]: { key: "game" },
@@ -17,7 +17,7 @@ export function Home({ onNavigation }) {
   });
 
   function onListSelect({ content }) {
-    onNavigation(MENU_MAP[content].key);
+    navigateTo(MENU_MAP[content].key);
   }
 
   return (
@@ -52,7 +52,7 @@ export function Home({ onNavigation }) {
           invertSelected={true}
           items={Object.keys(MENU_MAP)}></list>
       </box>
-      {context.announcement && (
+      {announcement && (
         <box
           width="50%"
           left="25%"
@@ -62,7 +62,7 @@ export function Home({ onNavigation }) {
           style={{ border: { fg: "blue" } }}
           label="Announcements">
           <text left={2} top={1}>
-            {context.announcement}
+            {announcement}
           </text>
         </box>
       )}

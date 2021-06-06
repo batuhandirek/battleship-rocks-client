@@ -1,3 +1,5 @@
+import { Spinner } from '../../../components/Spinner'
+
 export function Creating() {
   return (
     <box top="center" left="center">
