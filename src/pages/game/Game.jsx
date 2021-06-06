@@ -40,7 +40,6 @@ export function Game() {
   }, []);
 
   useEffect(() => {
-    console.log(state.gameSize, state.isGamePrivate)
     if (state.isGamePrivate) {
       handleCreatePrivateGame();
     } else {
@@ -62,7 +61,6 @@ export function Game() {
       size: state.gameSize,
       token: token,
     });
-    console.log(createRes)
     if (createRes.ok) {
       dispatch(gameActions.privateGameSuccess(createRes.data));
     }

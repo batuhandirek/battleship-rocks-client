@@ -6,7 +6,6 @@ export function AppContextProvider({ children, rootState }) {
   const [page, setPage] = useState("home");
 
   const navigateTo = (submitted) => {
-    console.log(submitted);
     if (submitted === "quit") {
       quit();
     } else {

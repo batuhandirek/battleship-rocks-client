@@ -88,7 +88,6 @@ export function gameReducer(state = gameInitialState, action) {
     if (randomized) {
       ({ board, ships } = randomized);
     }
-    console.log({ board, ships, gameSize })
     return {
       myBoardStatus: board,
       myShips: ships,
