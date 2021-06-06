@@ -4,7 +4,7 @@ import { useGameCtx } from "./gameContext";
 import { gameActionTypes, MODES } from "./gameReducer";
 import { useAppCtx } from "../../appContext";
 
-export function MyZone(props) {
+export function MyZone({ formationMenuRef, logRef }) {
   const {
     state: { gameSize, placementConfirmed, stage, gameId, myBoardStatus, myShips },
     dispatch
@@ -59,7 +59,7 @@ export function MyZone(props) {
           <box width="33%">
             {!placementConfirmed ? (
               <list
-                ref={props.formationMenuRef}
+                ref={formationMenuRef}
                 onSelect={handleFormationMenuSelect}
                 keys={true}
                 right={0}
@@ -93,7 +93,7 @@ export function MyZone(props) {
                   style: { inverse: true },
                 }}
                 mouse={true}
-                ref={log}
+                ref={logRef}
               />
             )}
           </box>

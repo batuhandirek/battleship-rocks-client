@@ -1,4 +1,5 @@
 import blessed from 'blessed';
+import * as process from "process";
 
 export const screen = blessed.screen({
     autoPadding: true,
@@ -26,7 +27,7 @@ const getCircularReplacer = () => {
 export const str = (obj) => JSON.stringify(obj, getCircularReplacer())
 
 // Adding a way to quit the program
-screen.key(['C-c'], function (ch, key) {
+screen.key(['C-c'], function () {
     return process.exit(0);
 });
 

@@ -1,21 +1,22 @@
 import * as _ from "lodash";
 import { nanoid } from "nanoid";
+import * as process from "process";
 import { SIZE_CONFIG } from "../constants/GAME";
 
 export const generateEmptyBoard = (size) => {
   return new Array(size)
     .fill(1)
-    .map((one) => new Array(size).fill(1).map((one) => 0));
+    .map(() => new Array(size).fill(1).map(() => 0));
 };
 
 export const getShipCoordinateArray = ({ row, col, size, direction }) => {
   const positions = [];
   if (direction === "horz") {
-    new Array(size).fill(1).forEach((one, index) => {
+    new Array(size).fill(1).forEach((_, index) => {
       positions.push({ row, col: col + index });
     });
   } else {
-    new Array(size).fill(1).forEach((one, index) => {
+    new Array(size).fill(1).forEach((_, index) => {
       positions.push({ row: row + index, col: col });
     });
   }
@@ -24,13 +25,13 @@ export const getShipCoordinateArray = ({ row, col, size, direction }) => {
 
 export const paintBoard = (board, { row, col, size, direction }, value) => {
   if (direction === "horz") {
-    new Array(size).fill(1).forEach((one, index) => {
+    new Array(size).fill(1).forEach((_, index) => {
       if ([row, col + index].some((i) => i < 0 || i >= board.length))
         return board;
       board[row][col + index] = value;
     });
   } else {
-    new Array(size).fill(1).forEach((one, index) => {
+    new Array(size).fill(1).forEach((_, index) => {
       if ([col, row + index].some((i) => i < 0 || i >= board.length))
         return board;
       board[row + index][col] = value;
@@ -170,12 +171,12 @@ export const randomizeBoard = (rowCount, iter = 0) => {
 export const delay = async (ms) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-export function changeCoordOnBoard(board, destroyedShip) {
+export function changeCoordOnBoard(board, destroyedShip, row, col, shot) {
   const newBoard = _.cloneDeep(board);
   if (destroyedShip) {
     const coords = getShipCoordinateArray(destroyedShip);
-    coords.forEach(({ row, col }) => {
-      newBoard[row][col] = 3;
+    coords.forEach(({ row: coordRow, col: coordCol }) => {
+      newBoard[coordRow][coordCol] = 3;
     });
   } else {
     newBoard[row][col] = shot ? 2 : 4;

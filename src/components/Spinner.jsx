@@ -22,7 +22,7 @@ export function Spinner({
 
   return (
     <box width={width * dotCount} {...boxProps}>
-      {new Array(tickCount % (dotCount + 1)).fill(1).map((one, index) => (
+      {new Array(tickCount % (dotCount + 1)).fill(1).map((_, index) => (
         <text width={width} left={width * index} key={index}>
           .
         </text>

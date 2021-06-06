@@ -5,7 +5,7 @@ export function Placement() {
     state: { placementConfirmed, placementFailed, enemyPlacementConfirmed },
   } = useGameCtx();
   return (
-    <div>
+    <>
       <box left="20%" width="20%">
         <text top="center" left="center">
           {placementConfirmed
@@ -22,6 +22,6 @@ export function Placement() {
             : "Waiting for enemy to place their fleet"}
         </text>
       </box>
-    </div>
+    </>
   );
 }

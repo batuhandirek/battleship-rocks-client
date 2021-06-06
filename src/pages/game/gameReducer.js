@@ -5,6 +5,7 @@ import {
   changeCoordOnBoard,
   generateEmptyBoard,
   randomizeBoard,
+  getShipAtCoordinate
 } from "../../lib/util";
 
 // MODE_SELECTION
@@ -81,7 +82,6 @@ export const gameInitialState = {
 };
 
 export function gameReducer(state = gameInitialState, action) {
-  console.log(action)
   function randomizeMyBoard(gameSize = state.gameSize) {
     let board, ships;
     const randomized = randomizeBoard(gameSize);
@@ -180,12 +180,14 @@ export function gameReducer(state = gameInitialState, action) {
         ...state,
         enemyPlacementConfirmed: true,
       };
-    case gameActionTypes.SET_TURN:
+    case gameActionTypes.SET_TURN: {
+      const { turn } = action.payload;
       return {
         ...state,
         stage: MODES.PLAYING,
         turn,
       };
+    }
     case gameActionTypes.PLAYER_MOVE: {
       const { turn, previousMoveUser, previousMoveShot } = action.payload;
       return {
@@ -224,10 +226,13 @@ export function gameReducer(state = gameInitialState, action) {
         opponentIsShooting: action.payload.opponentIsShooting,
       };
     case gameActionTypes.OPPONENT_MOVE: {
-      const { destroyedShip } = action.payload;
+      const { destroyedShip, row, col, shot } = action.payload;
       const newBoard = changeCoordOnBoard(
         state.opponentBoardStatus,
         destroyedShip,
+        row,
+        col,
+        shot,
       );
       return {
         ...state,
@@ -238,8 +243,8 @@ export function gameReducer(state = gameInitialState, action) {
       };
     }
     case gameActionTypes.MY_MOVE: {
-      const { destroyedShip } = action.payload;
-      const newShips = _.cloneDeep(state.ships);
+      const { destroyedShip, row, col, shot } = action.payload;
+      const newShips = _.cloneDeep(state.myShips);
       const shipHit = getShipAtCoordinate({ ships: newShips, row, col });
       // Increment ship
       if (shipHit) {
@@ -249,7 +254,13 @@ export function gameReducer(state = gameInitialState, action) {
           newShips[shipIndex].hit === newShips[shipIndex].size;
       }
 
-      const newBoard = changeCoordOnBoard(state.myBoardStatus, destroyedShip);
+      const newBoard = changeCoordOnBoard(
+        state.myBoardStatus,
+        destroyedShip,
+        row,
+        col,
+        shot,
+      );
 
       return {
         ...state,
@@ -344,12 +355,10 @@ export const gameActions = {
       },
     };
   },
-  onOpponentMove(destroyedShip) {
+  onOpponentMove(payload) {
     return {
       type: gameActionTypes.OPPONENT_MOVE,
-      payload: {
-        destroyedShip,
-      },
+      payload,
     };
   },
   onMyMove(destroyedShip) {

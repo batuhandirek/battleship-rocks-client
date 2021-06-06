@@ -16,7 +16,6 @@ import {
   Ended,
 } from "./ModesStatusUI";
 import { useAppCtx } from "../../appContext";
-import * as _ from "lodash";
 import { useGameCtx } from "./gameContext";
 
 export function Game() {
@@ -24,6 +23,8 @@ export function Game() {
   const [opponentIsShooting, setOpponentIsShooting] = useState(false);
   const { socket, api, token, userId, navigateTo } = useAppCtx();
   const { state, dispatch } = useGameCtx();
+  const myZoneLogRef = useRef()
+  const enemyZoneLogRef = useRef()
 
   useEffect(() => {
     socket.on("game:found", onGameFound);
@@ -69,7 +70,6 @@ export function Game() {
   // EVENT HANDLERS FOR SOCKET EVENTS
   const onGameFound = (data) => {
     dispatch(gameActions.gameFoundAction(data));
-    // TODO: Needs to be done async
     formationMenuRef.current?.focus();
 
     socket.on("game:opponent:ready", onOpponentReady);
@@ -110,23 +110,24 @@ export function Game() {
           previousMoveShot: shot,
         }),
       );
-      // TODO: Needs to be done async
       if (valid) {
+        const movePayload = { destroyedShip, row, col, shot }
         // We shot, paint enemy grid
         if (playerId === userId) {
-          dispatch(gameActions.onOpponentMove(destroyedShip));
-          // TODO: check log
-          console.log(
+          dispatch(
+            gameActions.onOpponentMove(movePayload),
+          );
+          myZoneLogRef.current.log(
             `You shot at ${row}-${col} and ${shot ? "hit!" : "missed."} ` +
-              `${!!destroyedShip ? "You destroyed a ship!" : ""}`,
+              `${destroyedShip ? "You destroyed a ship!" : ""}`,
           );
         } else {
           // Enemy shot, paint my grid
-          dispatch(gameActions.myMove(destroyedShip));
+          dispatch(gameActions.onMyMove(movePayload));
 
-          console.log(
+          enemyZoneLogRef.current.log(
             `Enemy shot at ${row}-${col} and ${shot ? "hit!" : "missed."} ` +
-              `${!!destroyedShip ? "A ship is destroyed!" : ""}`,
+              `${destroyedShip ? "A ship is destroyed!" : ""}`,
           );
         }
       }
@@ -141,13 +142,11 @@ export function Game() {
 
   const onGameFinish = ({ playerWon }) => {
     dispatch(gameActions.gameFinish(playerWon === userId));
-    // TODO: Needs to be done async
     completeGameFinish();
   };
 
   const onOpponentLeft = () => {
     dispatch({ type: gameActionTypes.OPPONENT_LEFT });
-    // TODO: Needs to be done async
     completeGameFinish();
   };
 
@@ -169,25 +168,23 @@ export function Game() {
     [MODES.ENDED]: Ended,
   });
 
-  const stateEl = modesStatusUIMapRef.current[state.stage]
+  const stateEl = modesStatusUIMapRef.current[state.stage];
 
   return (
     <box width="100%" height="100%" top="0%" left="0%">
       {/*  My zone */}
       <box top="0%" width="100%" height="45%">
         {[MODES.PLACEMENT, MODES.PLAYING].includes(state.stage) && (
-          <MyZone formationMenuRef={formationMenuRef} />
+          <MyZone logRef={myZoneLogRef} formationMenuRef={formationMenuRef} />
         )}
       </box>
       {/*  Status bar */}
       <box top="45%" width="100%" height="10%">
-        {stateEl
-          ? createElement(stateEl)
-          : null}
+        {stateEl ? createElement(stateEl) : null}
       </box>
       {/*  Enemy zone */}
       {[MODES.PLACEMENT, MODES.PLAYING].includes(state.stage) && (
-        <EnemyZone isShooting={opponentIsShooting} />
+        <EnemyZone logRef={enemyZoneLogRef} isShooting={opponentIsShooting} />
       )}
     </box>
   );

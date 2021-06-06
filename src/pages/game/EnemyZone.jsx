@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { useAppCtx } from "../../appContext";
 
 import { SIZE_CONFIG } from "../../constants/GAME";
@@ -7,7 +6,7 @@ import { gameActions, MODES } from "./gameReducer";
 import { Grid } from "./Grid";
 import { Ship } from "./Ship";
 
-export function EnemyZone(props) {
+export function EnemyZone({ isShooting, logRef }) {
   const {
     state: {
       stage,
@@ -18,19 +17,20 @@ export function EnemyZone(props) {
       opponentBoardStatus,
       opponentDestroyedShips,
     },
+    dispatch
   } = useGameCtx();
-  const { api } = useAppCtx();
+  const { api, userId, token } = useAppCtx();
 
   const handleSubmitMove = async (row, col) => {
     if (stage !== MODES.PLAYING) return;
     if (turn !== userId) return;
     if (isSubmitting) return;
     else {
-      dispatch(setIsSubmitting(true));
+      dispatch(gameActions.setIsSubmitting(true));
 
       await api.moveSubmit({
-        token: token,
-        gameId: gameId,
+        token,
+        gameId,
         row,
         col,
       });
@@ -77,7 +77,7 @@ export function EnemyZone(props) {
                   style: { inverse: true },
                 }}
                 mouse={true}
-                ref={log}
+                ref={logRef}
               />
             </box>
             {/* GRID */}
@@ -86,7 +86,7 @@ export function EnemyZone(props) {
                 <Grid
                   board={opponentBoardStatus}
                   isInput
-                  isShooting={props.isShooting}
+                  isShooting={isShooting}
                   onMove={handleSubmitMove}
                   size={gameSize}
                 />
