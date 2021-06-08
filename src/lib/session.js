@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 
-export const persistToken = (token, fileName = "session_1.txt") => {
+export const persistToken = (token, fileName = "session.txt") => {
   try {
     const homeDir = os.homedir();
     const folderDir = path.join(homeDir, ".battleship");
@@ -16,7 +16,7 @@ export const persistToken = (token, fileName = "session_1.txt") => {
   }
 };
 
-export const getToken = (fileName = "session_1.txt") => {
+export const getToken = (fileName = "session.txt") => {
   try {
     const homeDir = os.homedir();
     const folderDir = path.join(homeDir, ".battleship");

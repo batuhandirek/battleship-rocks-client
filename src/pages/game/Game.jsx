@@ -117,7 +117,7 @@ export function Game() {
           dispatch(
             gameActions.onOpponentMove(movePayload),
           );
-          myZoneLogRef.current.log(
+          myZoneLogRef.current?.log(
             `You shot at ${row}-${col} and ${shot ? "hit!" : "missed."} ` +
               `${destroyedShip ? "You destroyed a ship!" : ""}`,
           );
@@ -125,7 +125,7 @@ export function Game() {
           // Enemy shot, paint my grid
           dispatch(gameActions.onMyMove(movePayload));
 
-          enemyZoneLogRef.current.log(
+          enemyZoneLogRef.current?.log(
             `Enemy shot at ${row}-${col} and ${shot ? "hit!" : "missed."} ` +
               `${destroyedShip ? "A ship is destroyed!" : ""}`,
           );
@@ -152,7 +152,7 @@ export function Game() {
 
   // Methods
   const completeGameFinish = () => {
-    setTimeout(navigateTo("home"), 2000);
+    setTimeout(() => navigateTo("home"), 2000);
   };
 
   const modesStatusUIMapRef = useRef({

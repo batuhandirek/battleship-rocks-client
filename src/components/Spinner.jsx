@@ -7,18 +7,17 @@ export function Spinner({
   boxProps = {},
 }) {
   const [tickCount, setTickCount] = useState(0);
-  const interval = useRef()
+  const interval = useRef();
 
   useEffect(() => {
-    interval.current = setInterval(onTick, tick);
+    interval.current = setInterval(
+      () => setTickCount((prevTickCount) => prevTickCount + 1),
+      tick,
+    );
     return () => {
       if (interval.current) clearInterval(interval.current);
     };
   }, []);
-
-  function onTick() {
-    setTickCount(tickCount + 1);
-  }
 
   return (
     <box width={width * dotCount} {...boxProps}>
