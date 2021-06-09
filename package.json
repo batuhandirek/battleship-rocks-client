@@ -30,6 +30,12 @@
     "react-blessed": "^0.7.2",
     "socket.io-client": "2.3.0"
   },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "printWidth": 120
+  },
   "devDependencies": {
     "@babel/core": "^7.14.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
