@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { useRef } from 'react';
 
 import { Home } from './pages/home/Home';

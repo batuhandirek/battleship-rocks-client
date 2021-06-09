@@ -109,7 +109,7 @@ export function Game() {
                     dispatch(gameActions.onOpponentMove(movePayload));
 
                     enemyZoneLogRef.current?.log(
-                        `Enemy shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ` +
+                        `You shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ` +
                             `${destroyedShip ? 'A ship is destroyed!' : ''}`
                     );
                 } else {
@@ -117,7 +117,7 @@ export function Game() {
                     dispatch(gameActions.onMyMove(movePayload));
 
                     myZoneLogRef.current?.log(
-                        `You shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ` +
+                        `Enemy shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ` +
                             `${destroyedShip ? 'You destroyed a ship!' : ''}`
                     );
                 }

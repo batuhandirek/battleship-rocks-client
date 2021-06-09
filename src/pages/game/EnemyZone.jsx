@@ -26,7 +26,6 @@ export function EnemyZone({ isShooting, logRef }) {
                 row,
                 col,
             });
-            // TODO: Needs to be done async
             dispatch(gameActions.setIsSubmitting(false));
         }
     };

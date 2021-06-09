@@ -25,7 +25,7 @@ export function Grid({
         }
     }, [isShooting]);
 
-    const handleGridNavigation = (ch, key) => {
+    const handleGridNavigation = (_, key) => {
         if (!isInput) return;
         debug(`Enemy grid navigation ${str(key.name)}`);
         const [shootingRow, shootingCol] = shootingCoords;
@@ -51,7 +51,7 @@ export function Grid({
     const sizeConfig = SIZE_CONFIG[size];
     return (
         <box height="100%" {...style} ref={grid} onKeypress={handleGridNavigation}>
-            {new Array(size * size).fill(1).map((one, index) => {
+            {new Array(size * size).fill(1).map((_, index) => {
                 const row = Math.floor(index / size);
                 const col = index % size;
                 return (

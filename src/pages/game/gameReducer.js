@@ -345,12 +345,10 @@ export const gameActions = {
             payload,
         };
     },
-    onMyMove(destroyedShip) {
+    onMyMove(payload) {
         return {
             type: gameActionTypes.MY_MOVE,
-            payload: {
-                destroyedShip,
-            },
+            payload,
         };
     },
 };
