@@ -190,9 +190,9 @@ export function changeCoordOnBoard(board, destroyedShip, row, col, shot) {
  * @returns {string}
  */
 export function getLogOnMove({ row, col, shot, destroyedShip, isEnemy }) {
-    const owner = isEnemy ? 'Enemy' : 'You';
+    const target = isEnemy ? 'Enemy' : 'You';
     const shipDestroyedMessage = isEnemy ? 'A ship is destroyed' : 'You destroyed a ship';
-    return `${owner} shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ${
+    return `${target} shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ${
         destroyedShip ? shipDestroyedMessage : ''
     }`;
 }
