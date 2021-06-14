@@ -222,7 +222,7 @@ export function gameReducer(state = gameInitialState, action) {
                 ...state,
                 opponentIsShooting: action.payload.opponentIsShooting,
             };
-        case gameActionTypes.OPPONENT_MOVE: {
+        case gameActionTypes.MY_MOVE: {
             const { destroyedShip, row, col, shot } = action.payload;
             const newBoard = changeCoordOnBoard(state.opponentBoardStatus, destroyedShip, row, col, shot);
             return {
@@ -233,7 +233,7 @@ export function gameReducer(state = gameInitialState, action) {
                     : state.opponentDestroyedShips,
             };
         }
-        case gameActionTypes.MY_MOVE: {
+        case gameActionTypes.OPPONENT_MOVE: {
             const { destroyedShip, row, col, shot } = action.payload;
             const newShips = _.cloneDeep(state.myShips);
             const shipHit = getShipAtCoordinate({ ships: newShips, row, col });

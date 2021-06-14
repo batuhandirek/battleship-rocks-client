@@ -176,3 +176,23 @@ export function changeCoordOnBoard(board, destroyedShip, row, col, shot) {
 
     return newBoard;
 }
+
+/**
+ *
+ *
+ * @export
+ * @param {Object} movePayload - { row, col, shot, destroyedShip, isEnemy }
+ * @param {number} movePayload.row
+ * @param {number} movePayload.col
+ * @param {boolean} movePayload.shot
+ * @param {Object} movePayload.destroyedShip
+ * @param {boolean} movePayload.isEnemy
+ * @returns {string}
+ */
+export function getLogOnMove({ row, col, shot, destroyedShip, isEnemy }) {
+    const owner = isEnemy ? 'Enemy' : 'You';
+    const shipDestroyedMessage = isEnemy ? 'A ship is destroyed' : 'You destroyed a ship';
+    return `${owner} shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ${
+        destroyedShip ? shipDestroyedMessage : ''
+    }`;
+}

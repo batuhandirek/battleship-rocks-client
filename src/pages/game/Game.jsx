@@ -17,6 +17,7 @@ import {
 } from './ModesStatusUI';
 import { useAppCtx } from '../../appContext';
 import { useGameCtx } from './gameContext';
+import { getLogOnMove } from '../../lib/util';
 
 export function Game() {
     const formationMenuRef = useRef();
@@ -106,19 +107,23 @@ export function Game() {
                 const movePayload = { destroyedShip, row, col, shot };
                 // We shot, paint enemy grid
                 if (playerId === userId) {
-                    dispatch(gameActions.onOpponentMove(movePayload));
+                    dispatch(gameActions.onMyMove(movePayload));
 
                     enemyZoneLogRef.current?.log(
-                        `You shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ` +
-                            `${destroyedShip ? 'A ship is destroyed!' : ''}`
+                        getLogOnMove({
+                            ...movePayload,
+                            isEnemy: false,
+                        })
                     );
                 } else {
                     // Enemy shot, paint my grid
-                    dispatch(gameActions.onMyMove(movePayload));
+                    dispatch(gameActions.onOpponentMove(movePayload));
 
                     myZoneLogRef.current?.log(
-                        `Enemy shot at ${row}-${col} and ${shot ? 'hit!' : 'missed.'} ` +
-                            `${destroyedShip ? 'You destroyed a ship!' : ''}`
+                        getLogOnMove({
+                            ...movePayload,
+                            isEnemy: true,
+                        })
                     );
                 }
             }
