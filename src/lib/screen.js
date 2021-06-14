@@ -1,4 +1,5 @@
 import blessed from 'blessed';
+import * as process from 'process';
 
 export const screen = blessed.screen({
     autoPadding: true,
@@ -9,24 +10,23 @@ export const screen = blessed.screen({
 });
 
 export const debug = (any) => {
-    screen.debug(any)
-}
+    screen.debug(any);
+};
 
 const getCircularReplacer = () => {
     const seen = new WeakSet();
     return (key, value) => {
-        if (typeof value === "object" && value !== null) {
-            if (seen.has(value)) return
-            seen.add(value)
+        if (typeof value === 'object' && value !== null) {
+            if (seen.has(value)) return;
+            seen.add(value);
         }
         return value;
-    }
+    };
 };
 
-export const str = (obj) => JSON.stringify(obj, getCircularReplacer())
+export const str = (obj) => JSON.stringify(obj, getCircularReplacer());
 
 // Adding a way to quit the program
-screen.key(['C-c'], function (ch, key) {
+screen.key(['C-c'], function () {
     return process.exit(0);
 });
-

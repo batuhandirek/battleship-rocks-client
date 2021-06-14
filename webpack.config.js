@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 
@@ -30,5 +29,5 @@ module.exports = {
         filename: 'bundle.js',
     },
     target: 'node',
-    externals: nodeModules
+    externals: nodeModules,
 };
